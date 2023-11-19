@@ -40,6 +40,12 @@
         <!-- https://mvnrepository.com/artifact/org.axonframework/axon-server-connector -->
         <dependency>
             <groupId>org.axonframework</groupId>
+            <artifactId>axon-spring-boot-starter</artifactId>
+            <version>4.8.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.axonframework</groupId>
             <artifactId>axon-server-connector</artifactId>
             <version>4.9.0</version>
         </dependency>
