@@ -2,8 +2,10 @@ package ma.enset.comptecqrses.commands.controllers;
 
 import lombok.AllArgsConstructor;
 import ma.enset.comptecqrses.commonApi.commands.CreateAccountCommand;
+import ma.enset.comptecqrses.commonApi.commands.CrediteAccountCommand;
 import ma.enset.comptecqrses.commonApi.dto.CreateAccountRequestDTO;
 
+import ma.enset.comptecqrses.commonApi.dto.CrediteAccountRequestDTO;
 import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.eventsourcing.eventstore.EventStore;
@@ -27,6 +29,16 @@ public class AccountCommandController {
         CompletableFuture<String> commandResponse=commandGateway.send(new CreateAccountCommand(
                 UUID.randomUUID().toString(),
                 request.getInitialBalance(),
+                request.getCurrency()
+        ));
+        return commandResponse;
+    }
+
+    @PutMapping(path = "/credit")
+    public  CompletableFuture<String> crediteAccount(@RequestBody CrediteAccountRequestDTO request){
+        CompletableFuture<String> commandResponse=commandGateway.send(new CrediteAccountCommand(
+                request.getAccountId(),
+                request.getAmount(),
                 request.getCurrency()
         ));
         return commandResponse;
