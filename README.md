@@ -10,4 +10,8 @@ Test :
 ![img_2.png](img_2.png)
 Test :
 ![img_3.png](img_3.png)
+3. Operation Debiter : 
+![img_5.png](img_5.png)
+Test : 
+![img_4.png](img_4.png)
 

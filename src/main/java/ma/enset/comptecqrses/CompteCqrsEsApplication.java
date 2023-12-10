@@ -7,7 +7,6 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 public class CompteCqrsEsApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(CompteCqrsEsApplication.class, args);
     }

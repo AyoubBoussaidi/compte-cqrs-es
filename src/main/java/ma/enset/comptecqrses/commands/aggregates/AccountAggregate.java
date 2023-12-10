@@ -2,11 +2,15 @@ package ma.enset.comptecqrses.commands.aggregates;
 
 import ma.enset.comptecqrses.commonApi.commands.CreateAccountCommand;
 import ma.enset.comptecqrses.commonApi.commands.CrediteAccountCommand;
+import ma.enset.comptecqrses.commonApi.commands.DebiteAccountCommand;
 import ma.enset.comptecqrses.commonApi.enums.ACCOUNT_STATUS;
 import ma.enset.comptecqrses.commonApi.events.AccountActivatedEvent;
 import ma.enset.comptecqrses.commonApi.events.AccountCreatedEvent;
 import ma.enset.comptecqrses.commonApi.events.AccountCreditedEvent;
+import ma.enset.comptecqrses.commonApi.events.AccountDebitedEvent;
+import ma.enset.comptecqrses.commonApi.exceptions.AccountSusppendedException;
 import ma.enset.comptecqrses.commonApi.exceptions.AmountNegativeException;
+import ma.enset.comptecqrses.commonApi.exceptions.BalanceNotSufficientException;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -34,8 +38,8 @@ public class AccountAggregate {
         AggregateLifecycle.apply(new AccountCreatedEvent(
                 createAccountCommand.getId(),
                 createAccountCommand.getInitialBalance(),
-                createAccountCommand.getCurrency()
-        ));
+                createAccountCommand.getCurrency(),
+                ACCOUNT_STATUS.CREATED));
     }
 
     @EventSourcingHandler
@@ -71,5 +75,23 @@ public class AccountAggregate {
     @EventSourcingHandler
     public void on(AccountCreditedEvent event){
         this.balance+=event.getAmount();
+    }
+
+
+    @CommandHandler
+    public void handle(DebiteAccountCommand command){
+        if (command.getAmount()<0) throw new AmountNegativeException("Amount should not be negative");
+        if(this.balance<command.getAmount()) throw new BalanceNotSufficientException("Balance not sufficient Exception =>"+this.balance);
+        if(this.status.equals(ACCOUNT_STATUS.SUSPENDED)) throw new AccountSusppendedException("Account Susppended");
+
+        AggregateLifecycle.apply(new AccountDebitedEvent(
+            command.getId(),
+            command.getAmount(),
+            command.getCurrency()
+        ));
+    }
+    @EventSourcingHandler
+    public void on(AccountDebitedEvent event){
+        this.balance-=event.getAmount();
     }
 }
